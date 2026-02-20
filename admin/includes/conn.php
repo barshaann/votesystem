@@ -7,9 +7,11 @@ $database = getenv('MYSQLDATABASE');
 $port = getenv('MYSQLPORT');
 
 $conn = new mysqli($host, $user, $password, $database, (int)$port);
+$conn->query("SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))");
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
 ?>
+
