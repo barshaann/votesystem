@@ -1,28 +1,37 @@
 <?php
-	include 'includes/session.php';
+include 'includes/session.php';
 
-	if(isset($_POST['add'])){
-		$description = $_POST['description'];
-		$max_vote = $_POST['max_vote'];
+if(isset($_POST['add'])){
 
-		$sql = "SELECT * FROM positions ORDER BY priority DESC LIMIT 1";
-		$query = $conn->query($sql);
-		$row = $query->fetch_assoc();
+    $description = $_POST['description'];
+    $max_vote = $_POST['max_vote'];
 
-		$priority = $row['priority'] + 1;
-		
-		$sql = "INSERT INTO positions (description, max_vote, priority) VALUES ('$description', '$max_vote', '$priority')";
-		if($conn->query($sql)){
-			$_SESSION['success'] = 'Position added successfully';
-		}
-		else{
-			$_SESSION['error'] = $conn->error;
-		}
+    $sql = "SELECT * FROM positions ORDER BY priority DESC LIMIT 1";
+    $query = $conn->query($sql);
 
-	}
-	else{
-		$_SESSION['error'] = 'Fill up add form first';
-	}
+    if($query && $query->num_rows > 0){
+        $row = $query->fetch_assoc();
+        $priority = $row['priority'] + 1;
+    }
+    else{
+        $priority = 1; // first position
+    }
 
-	header('location: positions.php');
+    $sql = "INSERT INTO positions (description, max_vote, priority) 
+            VALUES ('$description', '$max_vote', '$priority')";
+
+    if($conn->query($sql)){
+        $_SESSION['success'] = 'Position added successfully';
+    }
+    else{
+        $_SESSION['error'] = $conn->error;
+    }
+
+}
+else{
+    $_SESSION['error'] = 'Fill up add form first';
+}
+
+header('location: positions.php');
+exit();
 ?>
